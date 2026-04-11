@@ -1,0 +1,43 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "ulbrich-media/taily-app",
+    "type": "project",
+    "description": "Project scaffold for Taily — run composer create-project to set up a new installation.",
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ulbrich-media/taily"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ulbrich-media/taily": "dev-development"
+    },
+    "scripts": {
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ],
+        "post-install-cmd": [
+            "@php artisan vendor:publish --tag=taily-assets",
+            "@php artisan vendor:publish --tag=taily-config"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=taily-assets --force",
+            "@php artisan migrate --force"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
