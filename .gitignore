@@ -11,3 +11,5 @@
 /bootstrap/cache/*.php
 /vendor
 Thumbs.db
+
+composer.lock
