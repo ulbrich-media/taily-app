@@ -1,3 +1,4 @@
+## general stuff
 *.log
 .DS_Store
 .env
@@ -12,4 +13,5 @@
 /vendor
 Thumbs.db
 
+## scaffold specific stuff
 composer.lock
