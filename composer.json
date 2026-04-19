@@ -12,7 +12,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "ulbrich-media/taily": "dev-development"
+        "ulbrich-media/taily": "^0.1.0"
     },
     "scripts": {
         "post-root-package-install": [
