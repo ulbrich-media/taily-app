@@ -18,8 +18,14 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
-    # Send Requests To Front Controller...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
+    # Serve existing files directly (assets, robots.txt, etc.)
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Send API and Laravel routes to index.php
+    RewriteCond %{REQUEST_URI} ^/(api|internal|sanctum|up)(/|$)
     RewriteRule ^ index.php [L]
+
+    # Everything else goes to the React SPA
+    RewriteRule ^ index.html [L]
 </IfModule>
