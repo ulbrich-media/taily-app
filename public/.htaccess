@@ -23,7 +23,7 @@
     RewriteRule ^ - [L]
 
     # Send API and Laravel routes to index.php
-    RewriteCond %{REQUEST_URI} ^/(api|internal|sanctum|up)(/|$)
+    RewriteCond %{REQUEST_URI} ^/(api|internal|sanctum|up|storage)(/|$)
     RewriteRule ^ index.php [L]
 
     # Everything else goes to the React SPA
