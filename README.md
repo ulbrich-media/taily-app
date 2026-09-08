@@ -40,6 +40,16 @@ php artisan migrate
 
 Point your web server's document root to the `public/` directory.
 
+## Scheduled Tasks
+
+Taily runs time-based jobs (e.g. contract-signing reminders and expiry) via Laravel's scheduler. This does not require a persistent background worker — add a single cron entry that invokes the scheduler once a minute, and it exits immediately whenever nothing is due:
+
+```bash
+* * * * * php /path-to-your-install/artisan schedule:run >> /dev/null 2>&1
+```
+
+This is required for every installation. Without it, reminder emails and signing-link expiry will never run.
+
 ## Updating
 
 ```bash
