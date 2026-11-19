@@ -42,13 +42,15 @@ Point your web server's document root to the `public/` directory.
 
 ## Scheduled Tasks
 
-Taily runs time-based jobs (e.g. contract-signing reminders and expiry) via Laravel's scheduler. This does not require a persistent background worker — add a single cron entry that invokes the scheduler once a minute, and it exits immediately whenever nothing is due:
+Taily runs time-based jobs (contract-signing reminders and expiry, the Tiervermittlung.de export) via Laravel's scheduler. This does not require a persistent background worker — add a single cron entry that invokes the scheduler once a minute, and it exits immediately whenever nothing is due:
 
 ```bash
 * * * * * php /path-to-your-install/artisan schedule:run >> /dev/null 2>&1
 ```
 
-This is required for every installation. Without it, reminder emails and signing-link expiry will never run.
+This is required for every installation. Without it, reminder emails, signing-link expiry and the Tiervermittlung.de export will never run.
+
+To check it: `php artisan schedule:list` shows the registered jobs and when each is next due. `schedule:run` only starts jobs due in the current minute, so "No scheduled commands are ready to run" is the normal output most of the time; `php artisan schedule:test --name=tiervermittlung:sync` runs a single job right away.
 
 ## Updating
 
@@ -57,6 +59,8 @@ composer update ulbrich-media/taily
 ```
 
 This automatically publishes updated frontend assets and runs any new database migrations. Your `.env`, `storage/`, and published config overrides are never touched.
+
+`bootstrap/app.php` is not updated either. Installs set up with Taily v0.14.1 or earlier configured scheduled tasks and middleware there; once Taily registers them itself, replace that file with the current one from this repository. Until then the old file keeps working, but its looser CSRF exception list stays in effect.
 
 ## Configuration
 
