@@ -50,6 +50,54 @@ Taily runs time-based jobs (e.g. contract-signing reminders and expiry) via Lara
 
 This is required for every installation. Without it, reminder emails and signing-link expiry will never run.
 
+## File Uploads
+
+Taily accepts these uploads:
+
+| Upload | Maximum size |
+|---|---|
+| Animal and person pictures | 10 MB |
+| Adoption contracts (PDF/image) | 20 MB |
+| Animal videos (mp4, webm, mov) | 100 MB |
+
+PHP and the web server have their own, usually much lower, limits that apply **before** Taily sees a file. If they are lower than the table above, large uploads fail with an error. Raise them to the following values.
+
+### PHP
+
+| Setting | Value | Why |
+|---|---|---|
+| `upload_max_filesize` | `100M` | Largest single file (a video). |
+| `post_max_size` | `110M` | Whole request incl. form data, so it must be a bit larger than `upload_max_filesize`. |
+| `max_input_time` | `300` | Seconds PHP waits for the upload to arrive. Slow connections need more than the usual 60. |
+| `max_execution_time` | `300` | Seconds a request may run. Storing large files and creating image previews takes time. |
+
+`memory_limit` does not need to grow: uploads are streamed to a temporary file, not loaded into memory.
+
+Where to set these depends on your hosting:
+
+- **Hosting control panel** (most shared hosting): look for "PHP settings" or "PHP configuration". This is usually the easiest way.
+- **`.user.ini`** (PHP-FPM / CGI, common on shared hosting): create `public/.user.ini`:
+  ```ini
+  upload_max_filesize = 100M
+  post_max_size = 110M
+  max_input_time = 300
+  max_execution_time = 300
+  ```
+  PHP re-reads it after `user_ini.cache_ttl` (default 5 minutes).
+- **`php.ini`** (own server): set the values in the php.ini used by the web server (e.g. `/etc/php/8.4/fpm/php.ini`, not the `cli` one), then restart PHP-FPM.
+- **`.htaccess`** with `php_value upload_max_filesize 100M` etc. works **only** with Apache's `mod_php`. With PHP-FPM it causes a 500 error, so use `.user.ini` there instead.
+
+Note that `php -i` on the command line shows the CLI settings, which can differ from the web server's. To check the real values, look in your hosting panel or upload a large video.
+
+### Web server and proxies
+
+- **nginx** allows only 1 MB request bodies by default. Add to the `server` block and reload nginx:
+  ```nginx
+  client_max_body_size 110M;
+  ```
+- **Apache** allows 1 GB by default (since 2.4.54). Only check this if `LimitRequestBody` was lowered by your host.
+- **Reverse proxies / CDNs** in front of Taily have their own limits. For example, Cloudflare's free and pro plans cap uploads at 100 MB, so videos close to 100 MB can still fail there.
+
 ## Updating
 
 ```bash
