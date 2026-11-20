@@ -1,32 +1,18 @@
 <?php
 
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
-use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 
+// Keep this file minimal. `composer update` never replaces it, so anything
+// configured here would drift from the installed Taily version. Scheduled
+// tasks, middleware and CSRF exceptions are registered by Taily itself.
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         health: '/up',
     )
-    // Requires an operator-configured cron entry invoking `schedule:run`
-    // every minute — see the "Scheduled Tasks" section of this project's
-    // README. No queue worker involved, per Taily's shared-hosting
-    // constraint (ADR-012 Constraint 1 in the taily repo).
-    ->withSchedule(function (Schedule $schedule): void {
-        $schedule->command('contracts:process-reminders')->daily();
-    })
-    ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->statefulApi();
-        $middleware->validateCsrfTokens(except: [
-            'internal/invitations/*',
-            'internal/inspect/*/submit',
-        ]);
-        $middleware->remove([
-            ConvertEmptyStringsToNull::class,
-        ]);
-    })
+    // Required even without a callback: defines Laravel's default global
+    // middleware and the `web` / `api` groups Taily's routes use.
+    ->withMiddleware()
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
