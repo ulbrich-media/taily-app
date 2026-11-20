@@ -52,15 +52,7 @@ This is required for every installation. Without it, reminder emails and signing
 
 ## File Uploads
 
-Taily accepts these uploads:
-
-| Upload | Maximum size |
-|---|---|
-| Animal and person pictures | 10 MB |
-| Adoption contracts (PDF/image) | 20 MB |
-| Animal videos (mp4, webm, mov) | 100 MB |
-
-PHP, the web server and any proxy in front of Taily have their own limits, which apply **before** Taily sees a file. Make sure your hosting allows at least:
+The largest file Taily accepts is 100 MB. PHP, the web server and any proxy in front of Taily have their own limits, which apply **before** Taily sees a file. Make sure your hosting allows at least:
 
 | Requirement | Minimum |
 |---|---|
