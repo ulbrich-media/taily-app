@@ -50,6 +50,19 @@ Taily runs time-based jobs (e.g. contract-signing reminders and expiry) via Lara
 
 This is required for every installation. Without it, reminder emails and signing-link expiry will never run.
 
+## File Uploads
+
+The largest file Taily accepts is 100 MB. PHP, the web server and any proxy in front of Taily have their own limits, which apply **before** Taily sees a file. Make sure your hosting allows at least:
+
+| Requirement | Minimum |
+|---|---|
+| PHP `upload_max_filesize` | `100M` |
+| PHP `post_max_size` (must be larger than `upload_max_filesize`) | `110M` |
+| PHP `max_input_time` and `max_execution_time` | `300` seconds |
+| Request body size accepted by the web server and any proxy/CDN | 110 MB |
+
+If any of these is lower, large uploads fail with an error. How to change them depends on your hosting.
+
 ## Updating
 
 ```bash
