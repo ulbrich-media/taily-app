@@ -6,7 +6,7 @@ This repository is not the application itself. It is the minimal project skeleto
 
 ## Requirements
 
-- PHP 8.2+
+- PHP 8.3+
 - A web server with `mod_rewrite` enabled (Apache) or equivalent
 - A MySQL/MariaDB database
 
@@ -68,12 +68,30 @@ If any of these is lower, large uploads fail with an error. How to change them d
 ## Updating
 
 ```bash
-composer update ulbrich-media/taily
+composer update ulbrich-media/taily -W
 ```
+
+`-W` (`--with-all-dependencies`) lets Composer also update the packages Taily depends on, e.g. Laravel itself when Taily moves to a new major version. Without it, such an update fails with "fixed to … by a partial update".
 
 This automatically publishes updated frontend assets and runs any new database migrations. Your `.env`, `storage/`, and published config overrides are never touched.
 
 `bootstrap/app.php` is not updated either. Installs set up with Taily v0.14.1 or earlier configured scheduled tasks and middleware there; once Taily registers them itself, replace that file with the current one from this repository. Until then the old file keeps working, but its looser CSRF exception list stays in effect.
+
+### Installs set up with taily-app v0.1.0
+
+The first scaffold release did not refresh Laravel's package discovery after an update. Packages Taily added later (PDF generation, Sentry) are then installed but never loaded, which shows up as `Target class [dompdf.wrapper] does not exist` or a missing "Sentry" section in `php artisan about`. Check that your `composer.json` contains this script, and add it if not:
+
+```json
+"scripts": {
+    "post-autoload-dump": [
+        "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+        "@php artisan package:discover --ansi"
+    ],
+    ...
+}
+```
+
+Then run `php artisan package:discover` once and `php artisan optimize:clear`.
 
 ## Configuration
 
